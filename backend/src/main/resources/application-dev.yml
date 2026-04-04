@@ -22,6 +22,21 @@ spring:
   jackson:
     default-property-inclusion: non_null # JSON 处理时忽略空字段
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:127.0.0.1:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: food-delivery-seckill
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: com.food.delivery.dto.messaging
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: com.food.delivery.dto.messaging.SeckillClaimEvent
+
 mybatis-plus:
   type-aliases-package: com.food.delivery.entity # 实体别名扫描包
 

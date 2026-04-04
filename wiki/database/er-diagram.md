@@ -1,6 +1,6 @@
 # 数据库 ER 图
 
-> 与 Flyway 迁移 `V1`–`V17` 及实体类同步。完整字段见 [tables.md](tables.md)。
+> 与 Flyway 迁移 `V1`–`V18` 及实体类同步。完整字段见 [tables.md](tables.md)。
 
 ## Mermaid
 
@@ -51,3 +51,4 @@ erDiagram
 | V15 | 商家距离、推荐权重（首页排序） |
 | V16 | 商家评价、评价图、推荐菜 |
 | V17 | 用户头像 `avatar_url` |
+| V18 | 每个上架商家追加 4 条秒杀券模板（`INSERT … SELECT`，便于联调/压测） |

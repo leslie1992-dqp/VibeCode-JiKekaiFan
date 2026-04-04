@@ -7,10 +7,21 @@ spring:
   
   data:
     redis:
-      
-      host: ${REDIS_HOST:127.0.0.1}
+      host: ${REDIS_HOST:192.168.48.128}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:127.0.0.1:9092}
+    consumer:
+      group-id: ${KAFKA_GROUP_ID:food-delivery-seckill}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.food.delivery.dto.messaging
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: com.food.delivery.dto.messaging.SeckillClaimEvent
   jackson:
     default-property-inclusion: non_null
 
@@ -20,4 +31,9 @@ mybatis-plus:
 logging:
   level:
     '[com.food.delivery]': info
+
+app:
+  seckill:
+    redis-lua-enabled: true
+    kafka-enabled: true
 

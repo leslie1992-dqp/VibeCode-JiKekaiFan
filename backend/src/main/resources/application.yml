@@ -16,6 +16,12 @@ app:
   jwt:
     secret: "food-delivery-demo-secret-key-please-change"
     expire-hours: 24
+  seckill:
+    # Redis+Lua 闸门；false 时退回纯 DB（无 Redis 环境）
+    redis-lua-enabled: true
+    # true 时先发 Kafka 由消费者落库；false 时请求线程内同步写库（默认本地开发更简单）
+    kafka-enabled: true
+    kafka-topic: seckill-claim
   upload:
     # 评论图片等本地文件存储目录（运行目录下）
     dir: food-delivery-uploads

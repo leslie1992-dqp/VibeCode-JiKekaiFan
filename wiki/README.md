@@ -7,7 +7,7 @@
 | 路径 | 说明 |
 |------|------|
 | [database/er-diagram.md](database/er-diagram.md) | 数据库 ER 图（Mermaid） |
-| [database/tables.md](database/tables.md) | 表清单与字段说明（对齐 Flyway V1–V17） |
+| [database/tables.md](database/tables.md) | 表清单与字段说明（对齐 Flyway V1–V18） |
 | [api/features-and-apis.md](api/features-and-apis.md) | 功能与 REST API 映射、前端路由 |
 | [features/README.md](features/README.md) | 功能流程总索引 |
 | [features/infra-and-layers.md](features/infra-and-layers.md) | 分层、存储、Redis/Kafka 实况 |

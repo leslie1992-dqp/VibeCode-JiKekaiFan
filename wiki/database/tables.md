@@ -1,6 +1,6 @@
 # 数据库表清单
 
-> 与 `backend/src/main/resources/db/migration`（V1–V17）及 `com.food.delivery.entity` 下的实体类同步。
+> 与 `backend/src/main/resources/db/migration`（V1–V18）及 `com.food.delivery.entity` 下的实体类同步。
 
 ## 表一览
 
@@ -196,6 +196,8 @@
 | valid_from / valid_until | datetime | 有效期 |
 | status | tinyint | 1 上架 等 |
 | created_at / updated_at | datetime | 时间 |
+
+**演示数据**：V13/V14 为部分商家插入模板；**V18** 对 `merchant` 表中 `status=1` 的**每家商家**再追加 4 条模板（满15减2、满40减8、满80减15、满100减25，高库存），与既有行并存。
 
 ---
 

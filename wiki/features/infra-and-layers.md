@@ -17,6 +17,8 @@
 | SQL 表 | MySQL | Flyway：`backend/src/main/resources/db/migration/V*.sql` |
 | 支撑组件 | `backend/.../support/*.java` 等 | 如 `OrderNoAllocator`（查库防重生成订单号） |
 | 定时任务 | `backend/.../schedule/*.java` | `@Scheduled` |
+| 秒杀闸门 | `SeckillLuaClaimService` + `scripts/seckill_claim.lua` | `StringRedisTemplate` 执行 Lua，键 `seckill:stock:*` / `seckill:claimed:*` |
+| 秒杀异步落库 | `SeckillKafkaProducerConfiguration`、`SeckillClaimConsumer` | `KafkaTemplate<String,SeckillClaimEvent>`；`app.seckill.kafka-enabled` 控制 |
 
 ## MySQL（唯一持久化存储）
 
@@ -24,14 +26,18 @@
 
 ## Redis
 
-- `application-dev.yml` / `application-prod.yml` 中可出现 `spring.data.redis` 配置。
-- **`src/main/java` 中无任何 `RedisTemplate` / `StringRedisTemplate` / `@Cacheable` 等使用**。  
-  流程图中统一标注：**Redis：未接入业务**。
+- 配置：`spring.data.redis`（`application-dev.yml` / `application-prod.yml`）。
+- **秒杀领券**：`SeckillLuaClaimService` 使用 **`StringRedisTemplate`** 执行 **`classpath:scripts/seckill_claim.lua`**，在应用层实现**一人一单**（`SISMEMBER` + `SADD`）与**防超卖**（`DECR` 原子扣减，不足则回滚 `INCR`）。
+- 可通过 `app.seckill.redis-lua-enabled=false` 关闭 Redis 路径，退回纯 DB（`SeckillDbOnlyClaimService`）。
 
-## Kafka / 消息队列
+## Kafka
 
-- 依赖与代码中**未引入 Kafka**。  
-  流程图中统一标注：**Kafka：未使用**。
+- 依赖：`spring-kafka`；配置：`spring.kafka.bootstrap-servers`、消费者 `group-id` 等（见 `application-dev.yml`）。
+- **秒杀领券**：`app.seckill.kafka-enabled=true` 时，`MerchantSeckillCouponServiceImpl` 在 Lua 成功后 **`seckillKafkaTemplate.send`** 到 **`app.seckill.kafka-topic`**（默认 `seckill-claim`），由 **`SeckillClaimConsumer`** 调用 **`SeckillClaimPersistenceService.persistClaim`** 幂等写 MySQL。
+- `kafka-enabled=false` 时在同一线程内直接 `persistClaim`，不经过 Broker。
+- **业务 Topic 自动创建**：`kafka-enabled=true` 时 **`SeckillKafkaTopicConfiguration`** 注册 **`NewTopic`**（默认名同 `kafka-topic`，**3 分区、1 副本**），由 Spring **`KafkaAdmin`** 在**应用启动时**向 broker 建 topic（broker 需可达且具备建 topic 权限；与 `spring.kafka.bootstrap-servers` 指向的集群一致）。
+- 集群中还会出现 Kafka **内部 topic** **`__consumer_offsets`**（记录 consumer group 的位移），**不是**本仓库代码创建的业务 topic。
+- 根配置 `application.yml` 当前默认 `kafka-enabled: true`；本地无 Kafka 时可改为 `false` 或仅在 profile 中覆盖。
 
 ## 本地文件存储（非 DB）
 
@@ -55,4 +61,4 @@
 - **axios**：`request.ts` 发出的 HTTP 调用。
 - **Filter**：`JwtAuthenticationFilter`（若该路径需登录）。
 - **Controller / Service / Mapper**：Java 类与方法名。
-- **MySQL / File**：真实 IO；**Redis、Kafka** 若出现则标注为「未使用」或省略。
+- **MySQL / File**：真实 IO；**Redis / Kafka** 以秒杀流程为准，其余业务仍不经消息队列。
