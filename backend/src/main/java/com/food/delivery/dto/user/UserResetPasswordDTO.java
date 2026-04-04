@@ -1,0 +1,31 @@
+package com.food.delivery.dto.user;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
+public class UserResetPasswordDTO {
+    @NotBlank(message = "请输入手机号")
+    @Pattern(regexp = "^1\\d{10}$", message = "手机号格式不正确")
+    private String mobile;
+
+    @NotBlank(message = "请输入新密码")
+    @Size(min = 6, max = 32, message = "密码长度应为 6～32 位")
+    private String newPassword;
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+}

@@ -1,0 +1,26 @@
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.npm-cache/
+frontend/*.local
+*.tsbuildinfo
+
+# Backend (Maven)
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+backend/food-delivery-uploads/
+
+# IDE / OS
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Logs & env
+*.log
+.env
+.env.local
+*.pem
+
+# Cursor / local
+.mcps/

@@ -1,0 +1,28 @@
+{
+  "groups": [
+    {
+      "name": "app",
+      "type": "com.food.delivery.config.AppProperties",
+      "sourceType": "com.food.delivery.config.AppProperties"
+    },
+    {
+      "name": "app.jwt",
+      "type": "com.food.delivery.config.AppProperties$Jwt",
+      "sourceType": "com.food.delivery.config.AppProperties",
+      "sourceMethod": "getJwt()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "app.jwt.secret",
+      "type": "java.lang.String",
+      "description": "JWT 签名密钥（HS256）。"
+    },
+    {
+      "name": "app.jwt.expire-hours",
+      "type": "java.lang.Integer",
+      "description": "JWT 过期时间（小时）。",
+      "defaultValue": 24
+    }
+  ]
+}

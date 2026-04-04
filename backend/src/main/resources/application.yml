@@ -1,0 +1,22 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: food-delivery
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 35MB
+
+app:
+  jwt:
+    secret: "food-delivery-demo-secret-key-please-change"
+    expire-hours: 24
+  upload:
+    # 评论图片等本地文件存储目录（运行目录下）
+    dir: food-delivery-uploads
+
