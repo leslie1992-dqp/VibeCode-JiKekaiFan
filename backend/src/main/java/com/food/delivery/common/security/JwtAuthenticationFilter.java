@@ -41,7 +41,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 || path.startsWith("/api/v1/cart/")
                 || path.startsWith("/api/v1/merchant-drafts/")
                 || path.startsWith("/api/v1/merchant-seckill-coupons/")
-                || path.startsWith("/api/v1/orders"));
+                || path.startsWith("/api/v1/orders")
+                || path.startsWith("/api/v1/rider/")
+                || path.startsWith("/api/v1/merchant/orders/"));
     }
 
     @Override
@@ -53,11 +55,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String header = request.getHeader("Authorization");
-        if (header == null || !header.startsWith(BEARER_PREFIX)) {
+        String token = null;
+        if (header != null && header.startsWith(BEARER_PREFIX)) {
+            token = header.substring(BEARER_PREFIX.length()).trim();
+        } else if (request.getRequestURI() != null && request.getRequestURI().endsWith("/delivery/subscribe")) {
+            token = request.getParameter("token");
+        }
+        if (token == null || token.isBlank()) {
             writeUnauthorized(response, "missing or invalid Authorization header");
             return;
         }
-        String token = header.substring(BEARER_PREFIX.length()).trim();
         try {
             Long userId = jwtUtil.parseUserId(token);
             request.setAttribute(AuthConstants.ATTR_USER_ID, userId);

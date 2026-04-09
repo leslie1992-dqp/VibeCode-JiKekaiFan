@@ -3,7 +3,8 @@ import { useAuthStore } from "../store/auth";
 
 const request = axios.create({
   baseURL: "http://localhost:8081/api/v1",
-  timeout: 10000
+  /** 后端冷启动、Flyway、DB/Redis 首次建连可能超过数秒，10s 易误判为失败 */
+  timeout: 45000
 });
 
 request.interceptors.request.use((config) => {

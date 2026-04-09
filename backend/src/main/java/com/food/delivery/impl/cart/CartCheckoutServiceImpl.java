@@ -17,6 +17,7 @@ import com.food.delivery.mapper.order.OrderMapper;
 import com.food.delivery.mapper.product.ProductMapper;
 import com.food.delivery.service.cart.CartCheckoutService;
 import com.food.delivery.service.coupon.UserCouponLifecycleService;
+import com.food.delivery.service.delivery.DeliveryDispatchService;
 import com.food.delivery.service.order.OrderSalesService;
 import com.food.delivery.support.OrderNoAllocator;
 import com.food.delivery.vo.cart.CartCheckoutBatchResultVO;
@@ -53,6 +54,7 @@ public class CartCheckoutServiceImpl implements CartCheckoutService {
     private final DraftCouponSupport draftCouponSupport;
     private final UserCouponLifecycleService userCouponLifecycleService;
     private final OrderSalesService orderSalesService;
+    private final DeliveryDispatchService deliveryDispatchService;
 
     public CartCheckoutServiceImpl(
             CartItemMapper cartItemMapper,
@@ -63,7 +65,8 @@ public class CartCheckoutServiceImpl implements CartCheckoutService {
             OrderNoAllocator orderNoAllocator,
             DraftCouponSupport draftCouponSupport,
             UserCouponLifecycleService userCouponLifecycleService,
-            OrderSalesService orderSalesService
+            OrderSalesService orderSalesService,
+            DeliveryDispatchService deliveryDispatchService
     ) {
         this.cartItemMapper = cartItemMapper;
         this.productMapper = productMapper;
@@ -74,6 +77,7 @@ public class CartCheckoutServiceImpl implements CartCheckoutService {
         this.draftCouponSupport = draftCouponSupport;
         this.userCouponLifecycleService = userCouponLifecycleService;
         this.orderSalesService = orderSalesService;
+        this.deliveryDispatchService = deliveryDispatchService;
     }
 
     @Override
@@ -211,6 +215,7 @@ public class CartCheckoutServiceImpl implements CartCheckoutService {
         persistOrderLinesAndClearCart(order.getId(), b, b.now);
         if (immediate) {
             orderSalesService.applyPaidOrder(order.getId());
+            deliveryDispatchService.createAndDispatchForPaidOrder(order.getId());
         }
 
         CheckoutResultVO r = new CheckoutResultVO();

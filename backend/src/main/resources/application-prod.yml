@@ -36,4 +36,9 @@ app:
   seckill:
     redis-lua-enabled: true
     kafka-enabled: true
+  delivery:
+    enabled: ${DELIVERY_ENABLED:true}
+    realtime-enabled: ${DELIVERY_REALTIME_ENABLED:true}
+    location-store-enabled: ${DELIVERY_LOCATION_STORE_ENABLED:true}
+    location-min-interval-ms: ${DELIVERY_LOCATION_MIN_INTERVAL_MS:1000}
 

@@ -19,6 +19,7 @@ import com.food.delivery.mapper.order.OrderItemMapper;
 import com.food.delivery.mapper.order.OrderMapper;
 import com.food.delivery.mapper.product.ProductMapper;
 import com.food.delivery.service.coupon.UserCouponLifecycleService;
+import com.food.delivery.service.delivery.DeliveryDispatchService;
 import com.food.delivery.service.draft.MerchantDraftService;
 import com.food.delivery.service.order.OrderSalesService;
 import com.food.delivery.support.OrderNoAllocator;
@@ -52,6 +53,7 @@ public class MerchantDraftServiceImpl implements MerchantDraftService {
     private final DraftCouponSupport draftCouponSupport;
     private final UserCouponLifecycleService userCouponLifecycleService;
     private final OrderSalesService orderSalesService;
+    private final DeliveryDispatchService deliveryDispatchService;
 
     public MerchantDraftServiceImpl(
             MerchantOrderDraftMapper draftMapper,
@@ -63,7 +65,8 @@ public class MerchantDraftServiceImpl implements MerchantDraftService {
             OrderNoAllocator orderNoAllocator,
             DraftCouponSupport draftCouponSupport,
             UserCouponLifecycleService userCouponLifecycleService,
-            OrderSalesService orderSalesService
+            OrderSalesService orderSalesService,
+            DeliveryDispatchService deliveryDispatchService
     ) {
         this.draftMapper = draftMapper;
         this.draftItemMapper = draftItemMapper;
@@ -75,6 +78,7 @@ public class MerchantDraftServiceImpl implements MerchantDraftService {
         this.draftCouponSupport = draftCouponSupport;
         this.userCouponLifecycleService = userCouponLifecycleService;
         this.orderSalesService = orderSalesService;
+        this.deliveryDispatchService = deliveryDispatchService;
     }
 
     @Override
@@ -343,6 +347,7 @@ public class MerchantDraftServiceImpl implements MerchantDraftService {
 
         persistOrderLinesAndClearDraft(order.getId(), b, b.now);
         orderSalesService.applyPaidOrder(order.getId());
+        deliveryDispatchService.createAndDispatchForPaidOrder(order.getId());
         return checkoutResult(merchantId, order.getId(), orderNo, payAmount);
     }
 

@@ -21,6 +21,11 @@
 | `merchant_review` | 商家评价 | `MerchantReviewEntity` |
 | `merchant_review_image` | 评价配图 | `MerchantReviewImageEntity` |
 | `merchant_review_recommend` | 评价关联推荐菜 | `MerchantReviewRecommendEntity` |
+| `rider` | 骑手账号映射 | `RiderEntity` |
+| `rider_shift` | 骑手在线/负载状态 | `RiderShiftEntity` |
+| `delivery_task` | 配送任务主表 | `DeliveryTaskEntity` |
+| `delivery_event` | 配送状态事件日志 | `DeliveryEventEntity` |
+| `delivery_location` | 配送轨迹点 | `DeliveryLocationEntity` |
 
 ---
 
@@ -252,3 +257,78 @@
 | product_id | bigint | 推荐商品 |
 
 唯一约束：`(review_id, product_id)`。
+
+---
+
+## rider
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | bigint PK | 自增 |
+| user_id | bigint unique | 绑定用户 |
+| display_name | varchar(64) | 展示名 |
+| phone | varchar(20) | 手机号 |
+| vehicle_type | varchar(32) | 交通工具 |
+| rating | decimal(3,2) | 评分 |
+| max_concurrent_tasks | int | 最大并发单量 |
+| status | tinyint | 1 可用 0 停用 |
+| created_at / updated_at | datetime | 时间 |
+
+---
+
+## rider_shift
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | bigint PK | 自增 |
+| rider_id | bigint unique | 骑手 |
+| status | tinyint | 1 在线 2 忙碌 0 下线 |
+| current_task_count | int | 当前单量 |
+| online_at / offline_at | datetime | 上下线时间 |
+| created_at / updated_at | datetime | 时间 |
+
+---
+
+## delivery_task
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | bigint PK | 自增 |
+| order_id | bigint unique | 订单 |
+| merchant_id / user_id | bigint | 商家/用户 |
+| rider_id | bigint | 骑手，可空（待派单） |
+| status | tinyint | 10 待派单 20 已派单 30 取餐中 40 配送中 50 已送达 60 取消 70 失败 |
+| dispatch_attempt | int | 派单重试次数 |
+| assign_token | varchar(64) | 幂等令牌 |
+| expected_arrive_at | datetime | 预计送达 |
+| accepted_at / picked_up_at / delivered_at | datetime | 关键时间 |
+| created_at / updated_at | datetime | 时间 |
+
+---
+
+## delivery_event
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | bigint PK | 自增 |
+| task_id / order_id | bigint | 关联配送任务/订单 |
+| event_type | varchar(32) | ASSIGNED / ACCEPTED / PICKED_UP / DELIVERED / REASSIGNED / FAILED |
+| from_status / to_status | tinyint | 状态迁移 |
+| operator_type | varchar(16) | SYSTEM / RIDER / MERCHANT / USER |
+| operator_id | bigint | 操作人 |
+| event_time | datetime | 事件发生时间 |
+| payload_json | varchar(1024) | 扩展字段 |
+| created_at | datetime | 入库时间 |
+
+---
+
+## delivery_location
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | bigint PK | 自增 |
+| task_id / order_id / rider_id | bigint | 关联信息 |
+| latitude / longitude | decimal(10,6) | 坐标 |
+| speed_kmh / heading | decimal(6,2) | 速度、朝向 |
+| client_time | datetime | 客户端上报时间 |
+| created_at | datetime | 服务端时间 |

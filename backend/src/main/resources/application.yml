@@ -25,4 +25,18 @@ app:
   upload:
     # 评论图片等本地文件存储目录（运行目录下）
     dir: food-delivery-uploads
+  delivery:
+    enabled: true
+    realtime-enabled: true
+    location-store-enabled: true
+    location-min-interval-ms: 1000
+    # 演示：时长约为「未缩放公式」的十分之一，ETA 与商家 distance_km 成正比
+    demo-time-scale: 0.1
+    eta-base-minutes: 8
+    eta-minutes-per-km: 3
+    eta-default-distance-km: 3
+    demo-assigned-to-arrive-minutes: 2
+    demo-arrive-to-pickup-minutes: 1
+    demo-pickup-to-ship-minutes: 0.5
+    demo-deliver-before-eta-minutes: 2
 

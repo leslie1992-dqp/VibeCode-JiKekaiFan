@@ -116,8 +116,32 @@
 | 我的订单列表 | GET | `/api/v1/orders` | 是 |
 | 支付（待支付 → 成功） | POST | `/api/v1/orders/{orderId}/pay` | 是 |
 | 取消订单 | POST | `/api/v1/orders/{orderId}/cancel` | 是 |
+| 配送摘要 | GET | `/api/v1/orders/{orderId}/delivery` | 是 |
+| 配送轨迹 | GET | `/api/v1/orders/{orderId}/delivery/track?limit=30` | 是 |
+| 配送实时订阅（SSE） | GET | `/api/v1/orders/{orderId}/delivery/subscribe` | 是（EventSource 可用 `?token=`） |
 
 前端：`order.ts`，页面 `OrderListView.vue`。
+
+---
+
+## 骑手配送
+
+| 功能 | 方法 | 路径 | 鉴权 |
+|------|------|------|------|
+| 骑手接单 | POST | `/api/v1/rider/tasks/{taskId}/accept` | 是（骑手账号） |
+| 骑手取餐 | POST | `/api/v1/rider/tasks/{taskId}/pickup` | 是（骑手账号） |
+| 骑手送达 | POST | `/api/v1/rider/tasks/{taskId}/deliver` | 是（骑手账号） |
+| 骑手上报位置 | POST | `/api/v1/rider/location` | 是（骑手账号） |
+| 商家侧配送摘要 | GET | `/api/v1/merchant/orders/{orderId}/delivery` | 是 |
+| 配送监控指标 | GET | `/api/v1/delivery/metrics` | 否（可按需接网关鉴权） |
+
+新增错误码：
+- `40021` 任务不是“已派单”，不能接单
+- `40022` 任务不是“取餐中”，不能发起配送
+- `40023` 任务不是“配送中”，不能确认送达
+- `40301` 当前账号不是骑手
+- `40407` 配送任务不存在
+- `42901` 位置上报过于频繁
 
 ---
 

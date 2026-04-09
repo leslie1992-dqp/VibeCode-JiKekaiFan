@@ -5,6 +5,7 @@ import com.food.delivery.common.exception.BizException;
 import com.food.delivery.common.order.OrderStatus;
 import com.food.delivery.entity.order.OrderEntity;
 import com.food.delivery.mapper.order.OrderMapper;
+import com.food.delivery.service.delivery.DeliveryDispatchService;
 import com.food.delivery.service.coupon.UserCouponLifecycleService;
 import com.food.delivery.service.order.OrderPaymentService;
 import com.food.delivery.service.order.OrderSalesService;
@@ -19,15 +20,18 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
     private final OrderMapper orderMapper;
     private final UserCouponLifecycleService userCouponLifecycleService;
     private final OrderSalesService orderSalesService;
+    private final DeliveryDispatchService deliveryDispatchService;
 
     public OrderPaymentServiceImpl(
             OrderMapper orderMapper,
             UserCouponLifecycleService userCouponLifecycleService,
-            OrderSalesService orderSalesService
+            OrderSalesService orderSalesService,
+            DeliveryDispatchService deliveryDispatchService
     ) {
         this.orderMapper = orderMapper;
         this.userCouponLifecycleService = userCouponLifecycleService;
         this.orderSalesService = orderSalesService;
+        this.deliveryDispatchService = deliveryDispatchService;
     }
 
     @Override
@@ -64,6 +68,7 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
             userCouponLifecycleService.markUsed(order.getUserCouponId());
         }
         orderSalesService.applyPaidOrder(orderId);
+        deliveryDispatchService.createAndDispatchForPaidOrder(orderId);
     }
 
     @Override

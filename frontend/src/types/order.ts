@@ -2,6 +2,13 @@
 export const ORDER_STATUS_PAID = 1;
 export const ORDER_STATUS_PENDING = 2;
 export const ORDER_STATUS_CANCELLED = 3;
+export const ORDER_STATUS_DELIVERY_ASSIGNED = 4;
+/** 骑手已到店 */
+export const ORDER_STATUS_DELIVERY_AT_MERCHANT = 9;
+export const ORDER_STATUS_DELIVERY_PICKING_UP = 5;
+export const ORDER_STATUS_DELIVERY_IN_TRANSIT = 6;
+export const ORDER_STATUS_DELIVERY_DONE = 7;
+export const ORDER_STATUS_DELIVERY_FAILED = 8;
 
 export interface OrderLineItem {
   productId: number;

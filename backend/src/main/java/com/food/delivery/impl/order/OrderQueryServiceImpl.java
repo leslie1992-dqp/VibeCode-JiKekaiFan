@@ -110,11 +110,33 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         if (st != null && st == OrderStatus.PENDING_PAYMENT) {
             vo.setStatusText("待支付");
             vo.setExpireAt(e.getExpireAt());
+        } else if (st != null && st == OrderStatus.PAID_SUCCESS) {
+            /** 已付款、尚未写入配送态（或未派到骑手）时仍为 1，不应与「交易完成」混淆 */
+            vo.setStatusText("已支付");
+            vo.setExpireAt(null);
         } else if (st != null && st == OrderStatus.CANCELLED) {
             vo.setStatusText("订单取消");
             vo.setExpireAt(null);
-        } else {
+        } else if (st != null && st == OrderStatus.DELIVERY_ASSIGNED) {
+            vo.setStatusText("已派单");
+            vo.setExpireAt(null);
+        } else if (st != null && st == OrderStatus.DELIVERY_ARRIVED_AT_MERCHANT) {
+            vo.setStatusText("已到店");
+            vo.setExpireAt(null);
+        } else if (st != null && st == OrderStatus.DELIVERY_PICKING_UP) {
+            vo.setStatusText("已取餐");
+            vo.setExpireAt(null);
+        } else if (st != null && st == OrderStatus.DELIVERY_IN_TRANSIT) {
+            vo.setStatusText("配送中");
+            vo.setExpireAt(null);
+        } else if (st != null && st == OrderStatus.DELIVERY_DONE) {
             vo.setStatusText("成功交易");
+            vo.setExpireAt(null);
+        } else if (st != null && st == OrderStatus.DELIVERY_FAILED) {
+            vo.setStatusText("配送超时");
+            vo.setExpireAt(null);
+        } else {
+            vo.setStatusText(st == null ? "—" : "处理中");
             vo.setExpireAt(null);
         }
 
